@@ -24,9 +24,9 @@ Fetches current movies in Greek theaters from TMDb API and stores them in a SQLi
 
 ## Usage
 Run the application with:
-    ```bash
-    python run.py
-
+ ```bash
+ python run.py
+```
 This will:
 
 1. Fetch movies currently playing in Greece from TMDb
@@ -42,21 +42,25 @@ By default, the application uses an included API key. To use your own:
 TMDB_API_KEY=your_api_key_here
 
 ## Database Verification
-Basic Checks
-sqlite3 movie_data.db
--- Count movies
+### Basic Checks
+  ```bash
+  sqlite3 movie_data.db
+```
+
+### Count movies
+```sql
 SELECT COUNT(*) FROM movies;
-
--- Count directors
+```
+###  Count directors
+```sql
 SELECT COUNT(*) FROM directors;
-
--- Verify director links
+```
+### Verify director links
+```sql
 SELECT COUNT(*) FROM movie_directors;
-
--- Verify director links
-SELECT COUNT(*) FROM movie_directors;
-
-Sample Data
+```
+#### Sample Data
+```sql
 SELECT 
     m.title AS movie_title,
     d.name AS director,
@@ -65,19 +69,23 @@ FROM movies m
 JOIN movie_directors md ON m.id = md.movie_id
 JOIN directors d ON d.id = md.director_id
 LIMIT 5;
-
-Data Quality Checks
--- Movies with missing descriptions
+```
+## Data Quality Checks
+### Movies with missing descriptions
+```sql
 SELECT title FROM movies WHERE description IS NULL OR description = '';
-
--- Directors without IMDb links
+```
+### Directors without IMDb links
+```sql
 SELECT name FROM directors WHERE imdb_id IS NULL OR imdb_id = '';
-
--- Verify no duplicate movies
+```
+### Verify no duplicate movies
+```sql
 SELECT tmdb_id, COUNT(*) FROM movies GROUP BY tmdb_id HAVING COUNT(*) > 1;
-
-Database Schema
+```
+## Database Schema
 The application uses the following schema (stored in schema.sql):
+```sql
 CREATE TABLE IF NOT EXISTS movies (
     id INTEGER PRIMARY KEY,
     tmdb_id INTEGER UNIQUE NOT NULL,
@@ -103,13 +111,15 @@ CREATE TABLE IF NOT EXISTS movie_directors (
     FOREIGN KEY (movie_id) REFERENCES movies(id),
     FOREIGN KEY (director_id) REFERENCES directors(id)
 );
+```
+### Troubleshooting
+- If you get API errors, verify your internet connection
 
-Troubleshooting
-If you get API errors, verify your internet connection
+- Delete movie_data.db to reset the database
 
-Delete movie_data.db to reset the database
+- Some movies/directors might have incomplete data from TMDb
 
-Some movies/directors might have incomplete data from TMDb
-
-Run tests
+### Running Tests
+```bash
 python -m pytest
+```
