@@ -19,8 +19,8 @@ Fetches current movies in Greek theaters from TMDb API and stores them in a SQLi
 ## Installation
 1. Clone this repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone git@github.com:Tsilkostas/Workearly_Project.git
+   cd MovieData
 
 ## Usage
 Run the application with:
