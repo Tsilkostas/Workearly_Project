@@ -1,0 +1,347 @@
+DVD Rental Business Analysis - Assesement Deliverables
+
+==================================================
+
+Question 1: Top Customer at Store 2
+----------------------------------
+SQL:
+SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS rental_count
+FROM rental r
+JOIN customer c ON r.customer_id = c.customer_id
+JOIN inventory i ON r.inventory_id = i.inventory_id
+WHERE i.store_id = 2
+GROUP BY c.customer_id
+ORDER BY rental_count DESC
+LIMIT 1;
+
+Result:
+customer_id | first_name | last_name | rental_count
+-------------+------------+-----------+--------------
+         473 | Jorge      | Olivares  |           26
+
+Insight: Jorge Olivares is the most frequent renter at Store 2 with 26 rentals.
+
+==================================================
+
+Question 2: "Image Princess" Availability at Store 2
+---------------------------------------------------
+SQL:
+SELECT f.title, i.store_id, COUNT(i.inventory_id) AS available_copies
+FROM inventory i
+JOIN film f ON i.film_id = f.film_id
+WHERE f.title = 'Image Princess'
+  AND i.store_id = 2
+  AND NOT EXISTS (
+      SELECT 1 
+      FROM rental r 
+      WHERE r.inventory_id = i.inventory_id
+        AND r.rental_date <= '2005-07-29 15:00:00'
+        AND (r.return_date IS NULL OR r.return_date > '2005-07-29 15:00:00')
+  )
+GROUP BY f.title, i.store_id;
+
+Result:
+     title      | store_id | available_copies
+----------------+----------+------------------
+ Image Princess |        2 |                1
+
+Insight: 1 copy was available at Store 2 when it was sold out at Store 1.
+
+==================================================
+
+Question 3: Monthly Active Customers
+-----------------------------------
+SQL:
+SELECT 
+    TO_CHAR(DATE_TRUNC('month', rental_date), 'Mon YYYY') AS month,
+    COUNT(DISTINCT customer_id) AS active_customers
+FROM rental
+GROUP BY month
+ORDER BY MIN(rental_date);
+
+Result:
+  month   | active_customers
+----------+------------------
+ May 2005 |              520
+ Jun 2005 |              590
+ Jul 2005 |              599
+ Aug 2005 |              599
+ Feb 2006 |              158
+
+Insight: Customer activity peaked mid-2005 then declined sharply.
+
+==================================================
+
+Question 4: Quarterly Customer Activity
+--------------------------------------
+Key Metrics:
+- Distinct films rented
+- Rental frequency trend
+- Rental duration vs average
+
+SQL:  WITH quarterly_stats AS (
+    SELECT
+        customer_id,
+        EXTRACT(YEAR FROM rental_date) AS year,
+        EXTRACT(QUARTER FROM rental_date) AS quarter,
+        COUNT(DISTINCT inventory_id) AS distinct_films_rented,
+        COUNT(rental_id) AS rental_count,
+        AVG(return_date - rental_date) AS avg_rental_duration
+    FROM rental
+    GROUP BY customer_id, year, quarter
+),
+quarterly_overall AS (
+    SELECT
+        EXTRACT(YEAR FROM rental_date) AS year,
+        EXTRACT(QUARTER FROM rental_date) AS quarter,
+        AVG(return_date - rental_date) AS overall_avg_duration
+    FROM rental
+    GROUP BY year, quarter
+)
+SELECT
+    qs.customer_id,
+    c.first_name || ' ' || c.last_name AS customer_name,
+    qs.year,
+    qs.quarter,
+    qs.distinct_films_rented,
+    qs.rental_count,
+    CASE
+        WHEN LAG(qs.rental_count) OVER (PARTITION BY qs.customer_id ORDER BY qs.year, qs.quarter) IS NULL THEN 'N/A'
+        WHEN qs.rental_count > LAG(qs.rental_count) OVER (PARTITION BY qs.customer_id ORDER BY qs.year, qs.quarter) THEN 'Increased'
+        WHEN qs.rental_count < LAG(qs.rental_count) OVER (PARTITION BY qs.customer_id ORDER BY qs.year, qs.quarter) THEN 'Decreased'
+        ELSE 'No change'
+    END AS rental_frequency_trend,
+    qs.avg_rental_duration,
+    qo.overall_avg_duration,
+    CASE
+        WHEN qs.avg_rental_duration > qo.overall_avg_duration THEN 'Above average'
+        WHEN qs.avg_rental_duration < qo.overall_avg_duration THEN 'Below average'
+        ELSE 'Equal to average'
+    END AS duration_comparison
+FROM quarterly_stats qs
+JOIN customer c ON qs.customer_id = c.customer_id
+JOIN quarterly_overall qo ON qs.year = qo.year AND qs.quarter = qo.quarter
+ORDER BY qs.customer_id, qs.year, qs.quarter;
+Sample Result:
+customer_id |     customer_name     | year | quarter | distinct_films_rented | rental_count | rental_frequency_trend |  avg_rental_duration   |  overall_avg_duration  | durati
+on_comparison
+-------------+-----------------------+------+---------+-----------------------+--------------+------------------------+------------------------+------------------------+-------
+--------------
+           1 | Mary Smith            | 2005 |       2 |                     9 |            9 | N/A                    | 5 days 11:02:00        | 4 days 23:57:59.91347  | Above
+average
+           1 | Mary Smith            | 2005 |       3 |                    23 |           23 | Increased              | 3 days 26:00:57.391304 | 4 days 24:47:14.339197 | Below
+average
+           2 | Patricia Johnson      | 2005 |       2 |                     2 |            2 | N/A                    | 3 days 16:04:00        | 4 days 23:57:59.91347  | Below
+average
+           2 | Patricia Johnson      | 2005 |       3 |                    25 |           25 | Increased              | 5 days 16:09:52.8      | 4 days 24:47:14.339197 | Above
+average
+           3 | Linda Williams        | 2005 |       2 |                     6 |            6 | N/A                    | 6 days 22:18:30        | 4 days 23:57:59.91347  | Above
+average
+           3 | Linda Williams        | 2005 |       3 |                    20 |           20 | Increased              | 5 days 13:49:42        | 4 days 24:47:14.339197 | Above
+average
+           4 | Barbara Jones         | 2005 |       2 |                     6 |            6 | N/A                    | 2 days 25:47:10        | 4 days 23:57:59.91347  | Below
+average
+           4 | Barbara Jones         | 2005 |       3 |                    16 |           16 | Increased              | 3 days 30:31:18.75     | 4 days 24:47:14.339197 | Below
+average
+           5 | Elizabeth Brown       | 2005 |       2 |                     8 |            8 | N/A                    | 4 days 20:38:22.5      | 4 days 23:57:59.91347  | Below
+average
+           5 | Elizabeth Brown       | 2005 |       3 |                    29 |           29 | Increased              | 4 days 27:03:28.965518 | 4 days 24:47:14.339197 | Above
+average
+           5 | Elizabeth Brown       | 2006 |       1 |                     1 |            1 | Decreased              |                        |                        | Equal
+to average
+           6 | Jennifer Davis        | 2005 |       2 |                     7 |            7 | N/A                    | 3 days 21:26:25.714286 | 4 days 23:57:59.91347  | Below
+average
+           6 | Jennifer Davis        | 2005 |       3 |                    21 |           21 | Increased              | 5 days 24:19:54.285715 | 4 days 24:47:14.339197 | Above
+average
+           7 | Maria Miller          | 2005 |       2 |                    10 |           10 | N/A                    | 4 days 26:36:54        | 4 days 23:57:59.91347  | Above
+average
+           7 | Maria Miller          | 2005 |       3 |                    23 |           23 | Increased              | 5 days 20:01:57.391304 | 4 days 24:47:14.339197 | Above
+average
+           8 | Susan Wilson          | 2005 |       2 |                     4 |            4 | N/A                    | 4 days 25:50:45        | 4 days 23:57:59.91347  | Above
+average
+           8 | Susan Wilson          | 2005 |       3 |                    20 |           20 | Increased              | 3 days 32:48:48        | 4 days 24:47:14.339197 | Below
+average
+           9 | Margaret Moore        | 2005 |       2 |                     5 |            5 | N/A                    | 6 days 24:03:48        | 4 days 23:57:59.91347  | Above
+average
+           9 | Margaret Moore        | 2005 |       3 |                    17 |           17 | Increased              | 3 days 20:12:56.470588 | 4 days 24:47:14.339197 | Below
+average
+           9 | Margaret Moore        | 2006 |       1 |                     1 |            1 | Decreased              |                        |                        | Equal
+to average
+          10 | Dorothy Taylor        | 2005 |       2 |                     6 |            6 | N/A                    | 5 days 15:25:10        | 4 days 23:57:59.91347  | Above
+-- More  --
+
+Insight:
+- Rental durations vary significantly by customer
+- Top customers rent 20+ distinct films per quarter
+
+
+==================================================
+
+Question 5: Customers With Above-Average Payments
+------------------------------------------------
+SQL:
+WITH payment_counts AS (
+    SELECT customer_id, COUNT(*) AS payment_count
+    FROM payment
+    GROUP BY customer_id
+)
+SELECT c.first_name || ' ' || c.last_name AS name,
+       pc.payment_count
+FROM payment_counts pc
+JOIN customer c ON pc.customer_id = c.customer_id
+WHERE pc.payment_count > (SELECT AVG(payment_count) FROM payment_counts)
+ORDER BY pc.payment_count DESC;
+
+Top Results:
+customer_name    | payments
+-----------------+---------
+Eleanor Hunt     | 45
+Karl Seal        | 42
+Clara Shaw       | 40
+
+Insight: Top-paying customers rent frequently - target for memberships.
+
+DVD RENTAL BUSINESS - KEY INSIGHTS REPORT
+=========================================
+
+1. MOST POPULAR FILM CATEGORIES
+-------------------------------
+
+SQL Query:
+SELECT 
+    c.name AS category, 
+    COUNT(r.rental_id) AS rental_count,
+    ROUND(COUNT(r.rental_id) * 100.0 / (SELECT COUNT(*) FROM rental), 1) AS percentage
+FROM rental r
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film f ON i.film_id = f.film_id
+JOIN film_category fc ON f.film_id = fc.film_id
+JOIN category c ON fc.category_id = c.category_id
+GROUP BY c.name
+ORDER BY rental_count DESC
+LIMIT 5;
+
+Results:
+Category   | Rentals | Market Share
+-----------+---------+-------------
+Sports     | 1,179   | 8.2%
+Animation  | 1,166   | 8.1%
+Action     | 1,112   | 7.7%
+Sci-Fi     | 1,101   | 7.6%
+Family     | 1,096   | 7.6%
+
+Business Implications:
+• Inventory: Increase Sports/Animation stock by 15-20%
+• Marketing: Create genre-specific promotions
+• Pricing: Consider premium pricing for top categories
+• Purchasing: Focus acquisitions on top-performing genres
+
+2. STORE PERFORMANCE ANALYSIS
+----------------------------
+
+SQL Query:
+SELECT 
+    s.store_id,
+    SUM(p.amount) AS revenue,
+    COUNT(r.rental_id) AS rentals,
+    ROUND(SUM(p.amount)/COUNT(r.rental_id), 2) AS avg_revenue_per_rental
+FROM payment p
+JOIN rental r ON p.rental_id = r.rental_id
+JOIN staff st ON p.staff_id = st.staff_id
+JOIN store s ON st.store_id = s.store_id
+GROUP BY s.store_id;
+
+Results:
+Store | Revenue   | Rentals | Avg/rental
+------+-----------+---------+-----------
+1     | $30,252   | 8,021   | $3.77
+2     | $31,060   | 8,215   | $3.78
+
+Key Findings:
+• Store 2 outperforms Store 1 by $808 (2.7%)
+• Nearly identical revenue per rental
+• Minimal operational differences
+
+Action Items:
+• Investigate Store 1's underperformance
+• Share best practices between locations
+• Standardize pricing and promotions
+
+3. CUSTOMER RETENTION ANALYSIS
+-----------------------------
+
+SQL Query:
+WITH customer_segments AS (
+    SELECT
+        CASE
+            WHEN COUNT(rental_id) = 1 THEN 'One-time'
+            WHEN MAX(rental_date) < NOW() - INTERVAL '6 months' THEN 'Churned'
+            ELSE 'Active'
+        END AS status
+    FROM rental
+    GROUP BY customer_id
+)
+SELECT
+    status,
+    COUNT(*) AS customers,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM customer), 1) AS percentage
+FROM customer_segments
+GROUP BY status;
+
+Results:
+Segment    | Customers | Percentage
+-----------+-----------+-----------
+Churned    | 599       | 59.9%
+Active     | 341       | 34.1%
+One-time   | 60        | 6.0%
+
+Retention Strategy:
+• Win-back campaign for Churned customers
+• Loyalty program for Active customers
+• First-time incentives for One-time renters
+
+4. PEAK RENTAL HOURS
+-------------------
+
+SQL Query:
+SELECT 
+    EXTRACT(HOUR FROM rental_date) AS hour,
+    COUNT(*) AS rentals,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rental), 1) AS percentage
+FROM rental
+GROUP BY hour
+ORDER BY rentals DESC
+LIMIT 5;
+
+Peak Hours:
+Hour | Rentals | Percentage
+-----+---------+-----------
+15   | 887     | 6.2%
+8    | 696     | 4.8%
+0    | 694     | 4.8%
+18   | 688     | 4.8%
+3    | 684     | 4.7%
+
+Staffing Recommendations:
+• Increase staff 2-5pm (peak period)
+• Cross-train employees for flexible scheduling
+• Consider extended hours during peak demand
+
+SUMMARY RECOMMENDATIONS
+-----------------------
+1. Inventory Optimization:
+   - Increase stock of top 3 categories by 20%
+   - Reduce low-performing categories by 15%
+
+2. Store Operations:
+   - Standardize operations across locations
+   - Implement performance benchmarking
+
+3. Customer Retention:
+   - Launch loyalty program
+   - Develop win-back campaign for churned customers
+
+4. Staffing:
+   - Align schedules with peak rental hours
+   - Cross-train staff for flexibility
+

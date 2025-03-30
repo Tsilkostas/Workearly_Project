@@ -1,0 +1,11 @@
+Log Analysis Report
+========================================
+1. 404 URLs: 0 found
+
+2. Avg Response Time: None ms
+
+3. Most Frequent Table: ('delayed_jobs', 8370)
+
+4. Redirects: 0 found
+
+5. Server Errors: 0 found

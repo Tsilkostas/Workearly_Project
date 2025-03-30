@@ -1,0 +1,10 @@
+{
+  "404_urls": {},
+  "avg_response_time_ms": null,
+  "most_frequent_table": [
+    "delayed_jobs",
+    8370
+  ],
+  "redirects": {},
+  "server_errors": {}
+}

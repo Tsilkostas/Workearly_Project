@@ -1,0 +1,17 @@
+# Created by pytest automatically.
+venv/
+.vscode/
+__pycache__/
+htmlcov/
+.tox/
+.nox/
+.coverage
+*.cover
+.hypothesis/
+.pytest_cache/
+.python-version
+Thumbs.db
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
