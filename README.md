@@ -7,7 +7,7 @@ This repository contains my solutions for the Operations Engineer position assig
 1. **Log Analysis - Task_1**  
    Analysis of server log files to extract key metrics and insights.
 
-2. **[DVD Rental Business Analysis - Task_2](task_2/README.txt)**  
+2. **[DVD Rental Business Analysis - Task_2](Task_2/README.txt)**  
    SQL queries answering business questions about a DVD rental operation.
 
 3. **[MovieData Application](MovieData/README.md)**  
