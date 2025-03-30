@@ -70,7 +70,7 @@ if __name__ == "__main__":
     # Save to a file (JSON format)
     save_report_to_file(report, "report.json")
 
-    # Optionally, save as a human-readable .txt file
+    # Save as a .txt file
     with open("report.txt", "w", encoding="utf-8") as f:
         f.write("Log Analysis Report\n")
         f.write("=" * 40 + "\n")
