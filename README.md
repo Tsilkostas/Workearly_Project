@@ -4,19 +4,19 @@ This repository contains my solutions for the Operations Engineer position assig
 
 ## Tasks Overview
 
-### [Task 1: Log Analysis](task1/)
+### [Task 1: Log Analysis](Task_1/)
 Analysis of server log files to extract:
 - 404 error statistics
 - Server response metrics
 - Database access patterns
 
-### [Task 2: DVD Rental Analysis](task2/)
+### [Task 2: DVD Rental Analysis](Task_2/)
 SQL queries analyzing:
 - Customer rental patterns
 - Inventory management
 - Business performance metrics
 
-### [Task 3: MovieData Application](task3/)
+### [Task 3: MovieData Application](MovieData/)
 Python application that:
 - Fetches current Greek theater movies from TMDb API
 - Stores complete movie/director information
