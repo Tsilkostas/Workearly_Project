@@ -1,14 +1,31 @@
 # Operations Engineer Assignment Solutions
 
-This repository contains my solutions for the Operations Engineer position assignment, organized into three distinct tasks.
+This repository contains my solutions for the Operations Engineer position assignment.
 
 ## Tasks Overview
 
-1. **Log Analysis - Task_1**  
-   Analysis of server log files to extract key metrics and insights.
+### [Task 1: Log Analysis](task1/)
+Analysis of server log files to extract:
+- 404 error statistics
+- Server response metrics
+- Database access patterns
 
-2. **DVD Rental Business Analysis - Task_2**  
-   SQL queries answering business questions about a DVD rental operation.
+### [Task 2: DVD Rental Analysis](task2/)
+SQL queries analyzing:
+- Customer rental patterns
+- Inventory management
+- Business performance metrics
 
-3. **MovieData**  
-   Python application fetching and storing movie data from TMDb API.
+### [Task 3: MovieData Application](task3/)
+Python application that:
+- Fetches current Greek theater movies from TMDb API
+- Stores complete movie/director information
+- Maintains a relational database
+
+## Usage
+Each task folder contains its own README with detailed instructions for setup and execution.
+
+## Technical Requirements
+- Python 3.8+ (Tasks 1 & 3)
+- PostgreSQL (Task 2)
+- Internet access for API calls (Task 3)
