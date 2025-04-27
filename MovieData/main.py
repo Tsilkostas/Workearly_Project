@@ -1,7 +1,8 @@
 
-from MovieData.tmdb_client import TMDbClient
-from MovieData.database import Database
-from MovieData.models import Movie, Director
+from tmdb_client import TMDbClient
+from database import Database
+from models import Movie, Director
+import logging
 
 class MovieDataApp:
     def __init__(self):
@@ -34,6 +35,11 @@ class MovieDataApp:
                 person for person in full_movie["credits"]["crew"]
                 if person["job"] == "Director"
             ]
+            # Download poster if available
+            if movie_data.get("poster_path"):
+                poster_path = self.tmdb.download_poster(movie_data["poster_path"])
+                if poster_path:
+                    logging.info(f"Downloaded poster for {movie.title}: {poster_path}")
             
             for director_data in directors:
                 # Get director details
