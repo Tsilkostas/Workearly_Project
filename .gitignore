@@ -11,6 +11,10 @@ htmlcov/
 .pytest_cache/
 .python-version
 Thumbs.db
+.env
+*.pdf
+posters/
+*.log
 # SQLite database files
 *.db
 *.sqlite

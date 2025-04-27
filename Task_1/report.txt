@@ -1,11 +1,34 @@
 Log Analysis Report
 ========================================
-1. 404 URLs: 0 found
 
-2. Avg Response Time: None ms
+1. 404 URLs (6 found):
+   - /api/accounts/3: 4378 times
+   - /user_password_resets: 1 times
+   - /petitions: 1 times
+   - /accounts: 1 times
+   - /backend/subscription/update_billing: 1 times
+   - /uas/request-password-reset?trk=uas-resetpass: 1 times
 
-3. Most Frequent Table: ('delayed_jobs', 8370)
+2. Average Response Time: 43.83 ms
 
-4. Redirects: 0 found
+3. Most Frequent Table: accounts (5372 queries)
 
-5. Server Errors: 0 found
+4. Redirects (14 found):
+   - /demo: 12 times
+   - /backend/jobs/862485973/browser/applied/candidate/1069769977?q=rob+long: 1 times
+   - /backend/jobs/856633841: 1 times
+   - /backend/jobs/856633841/edit?step=advertise: 1 times
+   - /backend/jobs/862485973/browser/applied: 2 times
+   - /accounts/new?uid=933596: 1 times
+   - /backend/jobs/856633841/postings/activate_all: 1 times
+   - /oauth/authorize?client_id=3f044f0fec65fz30e347df1d8126c6aa7edfbeba8c8ecd4c4b63654f52c9a955&redirect_uri=http%3A%2F%2Fwww.workabledemo.com%2Faardvark%2Foauth2workable%2Fcode&response_type=code&scope=r_jobs%20r_candidates%20w_candidates: 1 times
+   - /backend/jobs/745483704/candidates/1069769979/edit: 1 times
+   - /admin: 1 times
+   - /administrators/sign_in: 1 times
+   - /admin/job_boards/3043: 2 times
+   - /admin/job_boards/3020: 1 times
+   - /backend/reports: 2 times
+
+5. Server Errors (2 found):
+   - /backend/jobs/856633841/edit?step=advertise: 1 times
+   - /backend/reports/detailed_export?end_date=2014-09-03&fields=%7B%22order%22%3A%5B0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%5D%2C%22selected%22%3A%5B0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%5D%7D&include_archived=false&start_date=2014-08-28: 2 times

@@ -1,31 +1,40 @@
-# Operations Engineer Assignment Solutions
+Operations Engineer Assignment Solutions
+Complete Task Documentation
 
-This repository contains my solutions for the Operations Engineer position assignment.
+Task Overview 
 
-## Tasks Overview
+1. Log Analysis
+(Server log processing)
+404 error identification and statistics
+Server response time metrics
+Database access pattern analysis
+Location: Task_1/ folder
 
-### [Task 1: Log Analysis](Task_1/)
-Analysis of server log files to extract:
-- 404 error statistics
-- Server response metrics
-- Database access patterns
+2. DVD Rental Analysis
+(PostgreSQL business intelligence)
+Customer rental behavior patterns
+Inventory management optimization
+Financial performance metrics
+Location: Task_2/ folder
 
-### [Task 2: DVD Rental Analysis](Task_2/)
-SQL queries analyzing:
-- Customer rental patterns
-- Inventory management
-- Business performance metrics
+3. MovieData Application
+(Python API integration)
+Current Greek theater movies from TMDb
+Movie/director relational database
+Automatic data updates
+Location: MovieData/ folder
 
-### [Task 3: MovieData Application](MovieData/)
-Python application that:
-- Fetches current Greek theater movies from TMDb API
-- Stores complete movie/director information
-- Maintains a relational database
+    4. Requirements
+Python 3.8+ (Tasks 1 & 3)
+PostgreSQL (Task 2)
 
-## Usage
-Each task folder contains its own README with detailed instructions for setup and execution.
+   How to Run
 
-## Technical Requirements
-- Python 3.8+ (Tasks 1 & 3)
-- PostgreSQL (Task 2)
-- Internet access for API calls (Task 3)
+1. Log Analysis:
+     python Task_1/Script.py
+2. DVD Analysis:
+     psql -d dvdrental -f Task_2_Final.txt
+3. MovieData:
+     python MovieData/run.py
+(Each task folder has its own README for details)
+

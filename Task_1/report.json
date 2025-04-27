@@ -1,10 +1,35 @@
 {
-  "404_urls": {},
-  "avg_response_time_ms": null,
-  "most_frequent_table": [
-    "delayed_jobs",
-    8370
-  ],
-  "redirects": {},
-  "server_errors": {}
+  "404_urls": {
+    "/api/accounts/3": 4378,
+    "/user_password_resets": 1,
+    "/petitions": 1,
+    "/accounts": 1,
+    "/backend/subscription/update_billing": 1,
+    "/uas/request-password-reset?trk=uas-resetpass": 1
+  },
+  "avg_response_time_ms": 43.83262980160405,
+  "most_frequent_table": {
+    "table": "accounts",
+    "count": 5372
+  },
+  "redirects": {
+    "/demo": 12,
+    "/backend/jobs/862485973/browser/applied/candidate/1069769977?q=rob+long": 1,
+    "/backend/jobs/856633841": 1,
+    "/backend/jobs/856633841/edit?step=advertise": 1,
+    "/backend/jobs/862485973/browser/applied": 2,
+    "/accounts/new?uid=933596": 1,
+    "/backend/jobs/856633841/postings/activate_all": 1,
+    "/oauth/authorize?client_id=3f044f0fec65fz30e347df1d8126c6aa7edfbeba8c8ecd4c4b63654f52c9a955&redirect_uri=http%3A%2F%2Fwww.workabledemo.com%2Faardvark%2Foauth2workable%2Fcode&response_type=code&scope=r_jobs%20r_candidates%20w_candidates": 1,
+    "/backend/jobs/745483704/candidates/1069769979/edit": 1,
+    "/admin": 1,
+    "/administrators/sign_in": 1,
+    "/admin/job_boards/3043": 2,
+    "/admin/job_boards/3020": 1,
+    "/backend/reports": 2
+  },
+  "server_errors": {
+    "/backend/jobs/856633841/edit?step=advertise": 1,
+    "/backend/reports/detailed_export?end_date=2014-09-03&fields=%7B%22order%22%3A%5B0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%5D%2C%22selected%22%3A%5B0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%5D%7D&include_archived=false&start_date=2014-08-28": 2
+  }
 }
